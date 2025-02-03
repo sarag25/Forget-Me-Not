@@ -1,0 +1,4 @@
+flask
+flask_sqlalchemy
+Flask-MQTT
+SQLAlchemy-serializer

@@ -1,0 +1,3 @@
+preconfigurazioni
+    - weight offset fatto dal calibation -25 17
+    - tara a scatola vuota
