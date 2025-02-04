@@ -1,2 +1,4 @@
 requests
 tkintermapview
+pyserial
+paho-mqtt

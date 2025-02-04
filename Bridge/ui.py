@@ -38,10 +38,13 @@ text_font = ("Arial",25)
 
 window = tk.Tk()
 window.geometry("1700x1000")
-window.title("S.M.U.T Bridge")
+window.title("Forget-Me-Not Bridge")
 window.configure(background=main_bg_color)
 window.resizable(True, True)
 window.minsize(width=1600, height=720)
+
+img = tk.PhotoImage(file='logo.png')
+window.iconphoto(False, img)
 
 style = ttk.Style()
 if platform.system() == 'Windows':
@@ -68,10 +71,10 @@ notebook.add(frame3, text='Location')
 # TAB1
 
 if platform.system() == 'Windows':
-    title_label = tk.Label(frame1, text="S.M.U.T Bridge Prototype", font=("Arial", 75, "bold"),
+    title_label = tk.Label(frame1, text="Forget-Me-Not", font=("Arial", 75, "bold"),
                        bg=main_bg_color, fg=title_color, justify="center", pady=50)
 else:
-    title_label = tk.Label(frame1, text="S.M.U.T Bridge Prototype", font=("Arial", 75, "bold"),
+    title_label = tk.Label(frame1, text="Forget-Me-Not", font=("Arial", 75, "bold"),
                        bg=main_bg_color, fg=title_color, justify="center", pady=50)
 title_label.grid(row=0, sticky = "ew")
 
