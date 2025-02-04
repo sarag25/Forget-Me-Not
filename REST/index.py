@@ -3,6 +3,7 @@ from tempfile import template
 from flask import Blueprint, render_template, request, jsonify
 from database import BoxTemporalSeries, db, Assignment, Box, Tool, Operator
 from sqlalchemy import delete, select, update
+from flask import url_for
 
 TEMPORAL_SERIE_WINDOW = 5
 
@@ -31,6 +32,7 @@ def home():
             'operator': tuple[1]
         })
     return render_template('home.html', boxList = boxList)
+
 
 # When requested returns the tools screen of the dashboard
 @index.route('/tools')
