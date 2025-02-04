@@ -1,0 +1,81 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "backend_main",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "backend_main.py",
+            "cwd": "${workspaceFolder}/Bridge/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "MQTTmain",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "MQTTmain.py",
+            "cwd": "${workspaceFolder}/Bridge/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "UI",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "ui.py",
+            "cwd": "${workspaceFolder}/Bridge/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "server REST",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "server.py",
+            "cwd": "${workspaceFolder}/REST",
+            "sudo": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "server REST scarso",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "server.py",
+            "cwd": "${workspaceFolder}/REST",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Debugger: BridgePrototipo",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "bridge.py",
+            "cwd": "${workspaceFolder}/Preprototipo/bridgeB",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "mqtt_subscriber",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "cwd": "${workspaceFolder}/Preprototipo/mqtt_subscriber",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "BridgePrePrototipo",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "bridge.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/Preprototipo/bridge"
+        },
+        {
+            "name": "mqtt_module",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "mqtt_module.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/Preprototipo/bridge"
+        }
+    ]
+}
