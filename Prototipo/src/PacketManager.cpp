@@ -11,15 +11,19 @@ bool PacketManager::checkTimeout() {
 
 bool PacketManager::readPacket(Packet& pk) {
   int firstByte = cm.read();
+  // INITIATING SEQUENCE CHECK
   if (firstByte != 0xfe) {
     //if(DEBUG_PM) Serial.println("No starting byte [0xfe] found.");
     return false;
   }
 
+  // TIMEOUT IF PACKET TRASMISSION IS TOO LONG
   connection_start = millis();
 
+  // EXTRACT THE HEADER
   while (cm.available() < 2 && !checkTimeout());
-  if (checkTimeout()) {
+  if (checkTimeout()) {ù
+    // IF TIMEOUT OCCURRED SIGNAL ERROR
     if (DEBUG_PM) Serial.println("PACKET CORRUPTION: connection terminated abnormally - header.");
     return false;
   }
@@ -27,15 +31,18 @@ bool PacketManager::readPacket(Packet& pk) {
   int length = cm.read();
   int messageType = cm.read();
 
+  // BEGIN PACKET FORMATTING
   pk.mtype = (MessageType)messageType;
   pk.length = length;
 
+  // EXTRACTING PAYLOAD AND TERMINATING SEQUENCE
   while (cm.available() < pk.length + 1 && !checkTimeout());
   if (checkTimeout()) {
     if(DEBUG_PM) Serial.println("PACKET CORRUPTION: connection terminated abnormally - body.");
     return false;
   }
 
+  // MEMORY ALLOCATION OF THE PACKET PAYLOAD
   pk.payload = new byte[pk.length];
 
   for (int i = 0; i < pk.length; i++) {
@@ -44,6 +51,8 @@ bool PacketManager::readPacket(Packet& pk) {
   }
 
   int terminator = cm.read();
+  
+  // TERMINATING SEQUENCE CHECK
   if (terminator != 0xff) {
     delete[] pk.payload;
     if (DEBUG_PM) Serial.println("PACKET CORRUPTION: No terminator [0xff] found after reaching packet length.");
