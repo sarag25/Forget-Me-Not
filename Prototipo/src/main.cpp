@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define IS_LIGHT_VERSION false
+#define IS_LIGHT_VERSION true
 
 #define DEBUG_MAIN true
 #define DEBUG_SETUP false
@@ -11,12 +11,13 @@
 
 #include "PacketManager.h"
 #include "RFIDReader.h"
-#include "WeightSensor.h"
+
 
 #if !IS_LIGHT_VERSION
 #include "Accelerometer.h"
 #include "Buzzer.h"
 #include "TempHum.h"
+#include "WeightSensor.h"
 #endif
 
 #if !IS_LIGHT_VERSION
@@ -26,19 +27,17 @@ const int ID = 2;
 #endif
 
 const int STATUS_SEND_RATE = 5000;
-const int WEIGHT_SENSOR_SAMPLING_RATE = 1000;
 const int RFID_SENSOR_SAMPLING_RATE = 1000;
 
 #if !IS_LIGHT_VERSION
+const int WEIGHT_SENSOR_SAMPLING_RATE = 1000;
 const int TEMPHUM_SENSOR_SAMPLING_RATE = 1000;
 const int BUZZER_SENSOR_SAMPLING_RATE = 1000;
 #endif
 
-// TODO threshold
+#if !IS_LIGHT_VERSION
 int weightSensorThreshold = 2000;
 int tare = 15;
-
-#if !IS_LIGHT_VERSION
 float tempminSensorThreshold = 0;
 float tempmaxSensorThreshold = 50;
 float humSensorThreshold = 100;
@@ -50,8 +49,8 @@ bool isBuzzerPlaying = true;
 bool findMe = false;
 #endif
 
-bool errorWeight = false;
 #if !IS_LIGHT_VERSION
+bool errorWeight = false;
 bool errorTemp = false;
 bool errorHum = false;
 bool errorBump = false;
@@ -63,8 +62,6 @@ PacketManager::Packet packet;
 RFIDReader rfid;
 #if !IS_LIGHT_VERSION
 WeightSensor w(0, 4, 2);
-#else
-WeightSensor w(1, 4, 2);
 #endif
 
 #if !IS_LIGHT_VERSION
@@ -74,10 +71,10 @@ Buzzer b;
 #endif
 
 unsigned long time_rfid;
-unsigned long time_weight;
 unsigned long time_status;
 
 #if !IS_LIGHT_VERSION
+unsigned long time_weight;
 unsigned long time_accel;
 unsigned long time_temphum;
 unsigned long time_buzzer;
@@ -99,11 +96,11 @@ void sendStatus() {
   status[3] = (uint32_t)a.getAcceleration();
   status[4] = (int32_t)w.getWeight();
 #else
-  status[0] = errorWeight;
+  status[0] = false;
   status[1] = 22;
   status[2] = 25;
   status[3] = 0;
-  status[4] = (int32_t)w.getWeight();
+  status[4] = 2000;
 #endif
 
   packet.mtype = PacketManager::STATUS;
@@ -127,11 +124,6 @@ void setup() {
   delay(10);
   if (DEBUG_MAIN && DEBUG_SETUP) Serial.println("Setup...");
 
-  // WEIGHT SENSOR
-  w.setup();
-  if (DEBUG_MAIN && DEBUG_SETUP)
-    Serial.println("WEIGHT SENSOR setup completed.");
-
   bl.begin(9600);
 
   // RFID
@@ -139,6 +131,11 @@ void setup() {
   if (DEBUG_MAIN && DEBUG_SETUP) Serial.println("RFID setup completed.");
 
 #if !IS_LIGHT_VERSION
+  // WEIGHT SENSOR
+  w.setup();
+  if (DEBUG_MAIN && DEBUG_SETUP)
+    Serial.println("WEIGHT SENSOR setup completed.");
+
   // ACCELEROMETER
   a.setup();
   if (DEBUG_MAIN && DEBUG_SETUP)
@@ -157,14 +154,15 @@ void setup() {
   if (DEBUG_MAIN && DEBUG_SETUP) Serial.println("LED setup completed.");
 #endif
 
-  time_weight = millis();
-  time_rfid = time_weight;
-  time_status = time_weight;
+  
+  time_rfid = millis();
+  time_status = time_rfid;
 
 #if !IS_LIGHT_VERSION
-  time_accel = time_weight;
-  time_temphum = time_weight;
-  time_buzzer = time_weight;
+  time_weight = time_rfid;
+  time_accel = time_rfid;
+  time_temphum = time_rfid;
+  time_buzzer = time_rfid;
 #endif
 
   packet.payload = nullptr;
@@ -178,6 +176,17 @@ void loop() {
       Serial.println("One packet received");
     typedef PacketManager::MessageType ptype;
     switch (packet.mtype) {
+
+      case ptype::ID_REQUEST:
+        if (DEBUG_MAIN && DEBUG_INCOMING_MESSAGES)
+          Serial.println(String("ID REQUEST received."));
+        packet.mtype = ptype::ID_ANSWER;
+        packet.length = 4;
+        packet.payload = (byte*)&ID;
+        pm.sendPacket(packet);
+        packet.payload = nullptr;
+
+#if !IS_LIGHT_VERSION
       case ptype::WEIGHT:
         weightSensorThreshold = *(int32_t*)packet.payload;
         if (DEBUG_MAIN && DEBUG_INCOMING_MESSAGES)
@@ -191,16 +200,6 @@ void loop() {
           Serial.println(String("New tare received: ") + tare);
         break;
 
-      case ptype::ID_REQUEST:
-        if (DEBUG_MAIN && DEBUG_INCOMING_MESSAGES)
-          Serial.println(String("ID REQUEST received: ") + tare);
-        packet.mtype = ptype::ID_ANSWER;
-        packet.length = 4;
-        packet.payload = (byte*)&ID;
-        pm.sendPacket(packet);
-        packet.payload = nullptr;
-
-#if !IS_LIGHT_VERSION
       case ptype::BUMP:
         accelerometerThreshold = *(int32_t*)packet.payload;
         if (DEBUG_MAIN && DEBUG_INCOMING_MESSAGES)
@@ -250,6 +249,23 @@ void loop() {
     }
   }
 
+  if (millis() - time_rfid >= RFID_SENSOR_SAMPLING_RATE) {
+    String uuid = rfid.readUID();
+    if (uuid.length() > 1) {
+      packet.mtype = PacketManager::OBJ;
+      packet.length = uuid.length();
+      packet.payload = (byte*)uuid.c_str();
+
+      pm.sendPacket(packet);
+      sendStatus();
+      if (DEBUG_MAIN && DEBUG_RFID)
+        Serial.println("Oggetto rilevato. UUID: " + uuid);
+    }
+
+    time_rfid = millis();
+  }
+
+#if !IS_LIGHT_VERSION
   if (millis() - time_weight >= WEIGHT_SENSOR_SAMPLING_RATE) {
     int32_t weight = w.getWeight();
     if (weight >= weightSensorThreshold) {
@@ -271,23 +287,6 @@ void loop() {
     time_weight = millis();
   }
 
-  if (millis() - time_rfid >= RFID_SENSOR_SAMPLING_RATE) {
-    String uuid = rfid.readUID();
-    if (uuid.length() > 1) {
-      packet.mtype = PacketManager::OBJ;
-      packet.length = uuid.length();
-      packet.payload = (byte*)uuid.c_str();
-
-      pm.sendPacket(packet);
-      sendStatus();
-      if (DEBUG_MAIN && DEBUG_RFID)
-        Serial.println("Oggetto rilevato. UUID: " + uuid);
-    }
-
-    time_rfid = millis();
-  }
-
-#if !IS_LIGHT_VERSION
   if (millis() - time_accel >= a.BNO055_SAMPLERATE_DELAY_MS) {
     if (a.getAcceleration() >= accelerometerThreshold) {
       errorBump = true;

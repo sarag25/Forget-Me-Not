@@ -22,7 +22,7 @@ bool PacketManager::readPacket(Packet& pk) {
 
   // EXTRACT THE HEADER
   while (cm.available() < 2 && !checkTimeout());
-  if (checkTimeout()) {ù
+  if (checkTimeout()) {
     // IF TIMEOUT OCCURRED SIGNAL ERROR
     if (DEBUG_PM) Serial.println("PACKET CORRUPTION: connection terminated abnormally - header.");
     return false;

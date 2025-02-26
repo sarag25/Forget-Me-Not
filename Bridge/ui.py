@@ -43,8 +43,9 @@ window.configure(background=main_bg_color)
 window.resizable(True, True)
 window.minsize(width=1600, height=720)
 
-img = tk.PhotoImage(file='logo.png')
-window.iconphoto(False, img)
+if platform.system() == 'Windows':
+    img = tk.PhotoImage(file='logo.png')
+    window.iconphoto(False, img)
 
 style = ttk.Style()
 if platform.system() == 'Windows':
