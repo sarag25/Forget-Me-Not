@@ -1,8 +1,12 @@
-# Forget-Me-Not
+[Forget-Me-Not - presentation.pdf](https://github.com/user-attachments/files/22280908/Forget-Me-Not.-.presentation.pdf)# Forget-Me-Not
 An IoT project to help workers to keep track of their tools on the field.
 
-Video Introduction → 
+Video Introduction →
 [ForgetMeNot.mp4](https://github.com/user-attachments/assets/45de3454-c18a-4b9c-b492-9bedeb7065a4)
+
+Complete presentation →
+[Forget-Me-Not.pdf](https://github.com/user-attachments/files/22280910/Forget-Me-Not.-.presentation.pdf)
+
 
 - Warnings on harmful usage
 - Geolocation
