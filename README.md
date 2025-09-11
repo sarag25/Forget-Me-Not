@@ -1,4 +1,4 @@
-[Forget-Me-Not - presentation.pdf](https://github.com/user-attachments/files/22280908/Forget-Me-Not.-.presentation.pdf)# Forget-Me-Not
+# Forget-Me-Not
 An IoT project to help workers to keep track of their tools on the field.
 
 Video Introduction →
