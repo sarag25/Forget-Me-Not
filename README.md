@@ -7,6 +7,11 @@ Video Introduction →
 Complete presentation →
 [Forget-Me-Not.pdf](https://github.com/user-attachments/files/22280910/Forget-Me-Not.-.presentation.pdf)
 
+<p align="center">
+  <img height="250" alt="immagine" src="https://github.com/user-attachments/assets/e9998752-0d19-4525-b6f6-4594d767a927" />
+  <img height="250" alt="immagine" src="https://github.com/user-attachments/assets/b2ac6c9f-5f26-45fe-bb34-c016643d0137" />
+</p>
+
 
 - Warnings on harmful usage
 - Geolocation
